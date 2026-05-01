@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react"
 
-const ELEVEN_API_KEY = "YOUR_API_KEY_HERE"
+const ELEVEN_API_KEY = process.env.NEXT_PUBLIC_ELEVEN_API_KEY || ""
 const VOICE_ID = "pNInz6obpgDQGcFmaJgB"
 
 const TOUR_SECTIONS = [
@@ -167,6 +167,12 @@ export function VoiceTourButton() {
   }
 
   async function handleTour() {
+    if (!ELEVEN_API_KEY) {
+      setState("error")
+      setErrorMsg("API key not configured. Check .env.local")
+      return
+    }
+
     if (state === "playing") {
       // Stop playback
       shouldStopRef.current = true
