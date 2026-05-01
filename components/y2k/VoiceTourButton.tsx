@@ -5,15 +5,12 @@ import { useState, useRef } from "react"
 const ELEVEN_API_KEY = "YOUR_API_KEY_HERE"
 const VOICE_ID = "pNInz6obpgDQGcFmaJgB"
 
-const TOUR_SCRIPT = `Welcome to ElevenLabs — the future of AI voice technology. 
-We are bringing technology to life with ultra-realistic AI voice generation. 
-Our platform powers the best enterprises, creators, and developers.
-With ElevenCreative, you can generate speech, videos, music, and sound effects.
-With ElevenAgents, you can deploy conversational AI agents in 70 plus languages with ultra-low latency.
-Our ElevenAPI lets developers build anything with text to speech, speech to text, and music generation APIs.
-We have a library of 10,000 plus studio quality voices across more than 70 languages.
-Our research redefines human technology interaction, building the most expressive and accurate models in the world.
-Join us in building the future. Sign up for free at ElevenLabs dot I O.`
+const TOUR_SECTIONS = [
+  "Welcome to ElevenLabs dot com. Year two-thousand and one. The future of voice is HERE.",
+  "Our text to speech technology is the most advanced on the internet superhighway.",
+  "Voice cloning — clone any human voice in sixty seconds. This is not science fiction.",
+  "Join over one million creators already using ElevenLabs. Click the button. Do it now.",
+]
 
 type TourState = "idle" | "loading" | "playing" | "error"
 
@@ -96,11 +93,83 @@ function CassetteLoader() {
 export function VoiceTourButton() {
   const [state, setState] = useState<TourState>("idle")
   const [errorMsg, setErrorMsg] = useState("")
+  const [currentSection, setCurrentSection] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const shouldStopRef = useRef(false)
+
+  async function playVoiceTour() {
+    shouldStopRef.current = false
+    
+    for (let i = 0; i < TOUR_SECTIONS.length; i++) {
+      if (shouldStopRef.current) break
+      
+      setCurrentSection(i)
+      const text = TOUR_SECTIONS[i]
+      
+      try {
+        const response = await fetch(
+          `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
+          {
+            method: "POST",
+            headers: {
+              "xi-api-key": ELEVEN_API_KEY,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              text,
+              model_id: "eleven_monolingual_v1",
+              voice_settings: {
+                stability: 0.3,
+                similarity_boost: 0.9,
+              },
+            }),
+          }
+        )
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}))
+          throw new Error(err?.detail?.message || `API error ${response.status}`)
+        }
+
+        const blob = await response.blob()
+        const audioUrl = URL.createObjectURL(blob)
+        const audio = new Audio(audioUrl)
+        audioRef.current = audio
+
+        // Play and wait for audio to finish
+        await new Promise<void>((resolve, reject) => {
+          audio.onended = () => {
+            URL.revokeObjectURL(audioUrl)
+            resolve()
+          }
+          audio.onerror = () => {
+            URL.revokeObjectURL(audioUrl)
+            reject(new Error("Playback error"))
+          }
+          audio.play().catch(reject)
+        })
+
+        // Small delay between sections
+        if (i < TOUR_SECTIONS.length - 1 && !shouldStopRef.current) {
+          await new Promise((resolve) => setTimeout(resolve, 500))
+        }
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unknown error"
+        setState("error")
+        setErrorMsg(message)
+        return
+      }
+    }
+
+    if (!shouldStopRef.current) {
+      setState("idle")
+    }
+  }
 
   async function handleTour() {
     if (state === "playing") {
       // Stop playback
+      shouldStopRef.current = true
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current = null
@@ -113,49 +182,10 @@ export function VoiceTourButton() {
 
     setState("loading")
     setErrorMsg("")
+    setCurrentSection(0)
 
     try {
-      const response = await fetch(
-        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
-        {
-          method: "POST",
-          headers: {
-            "xi-api-key": ELEVEN_API_KEY,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            text: TOUR_SCRIPT,
-            model_id: "eleven_multilingual_v2",
-            voice_settings: {
-              stability: 0.5,
-              similarity_boost: 0.75,
-            },
-          }),
-        }
-      )
-
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}))
-        throw new Error(err?.detail?.message || `API error ${response.status}`)
-      }
-
-      const audioBlob = await response.blob()
-      const audioUrl = URL.createObjectURL(audioBlob)
-      const audio = new Audio(audioUrl)
-      audioRef.current = audio
-
-      audio.onended = () => {
-        setState("idle")
-        URL.revokeObjectURL(audioUrl)
-      }
-      audio.onerror = () => {
-        setState("error")
-        setErrorMsg("Playback error.")
-        URL.revokeObjectURL(audioUrl)
-      }
-
-      await audio.play()
-      setState("playing")
+      await playVoiceTour()
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error"
       setState("error")
@@ -175,6 +205,9 @@ export function VoiceTourButton() {
           style={{ background: "#050d0d", minWidth: 120 }}
         >
           <CassetteLoader />
+          <div className="text-xs mt-2" style={{ color: "#00FFFF", fontFamily: "'Courier New', monospace" }}>
+            Section {currentSection + 1} of {TOUR_SECTIONS.length}
+          </div>
         </div>
       )}
 
@@ -221,8 +254,8 @@ export function VoiceTourButton() {
         }}
         disabled={state === "loading"}
       >
-        {state === "loading" && "⏳ LOADING..."}
-        {state === "playing" && "■ STOP TOUR"}
+        {state === "loading" && "► LOADING..."}
+        {state === "playing" && "► STOP"}
         {state === "idle" && "► VOICE TOUR"}
         {state === "error" && "► RETRY TOUR"}
       </button>
