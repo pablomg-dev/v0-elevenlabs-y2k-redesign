@@ -1,5 +1,14 @@
 "use client"
 
+import { useRef, useState } from "react"
+
+const ELEVEN_API_KEY = process.env.NEXT_PUBLIC_ELEVEN_API_KEY || ""
+const VOICE_ID = "pNInz6obpgDQGcFmaJgB"
+const DEMO_TEXT =
+  "Amidst the outer atmosphere of the planet Aurora, the sky shimmered with fractured light."
+
+type DemoState = "idle" | "loading" | "playing" | "error"
+
 const features = [
   {
     title: "All-in-one AI Editor",
@@ -46,6 +55,69 @@ const features = [
 ]
 
 export function ElevenCreativeSection() {
+  const [demoState, setDemoState] = useState<DemoState>("idle")
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+
+  async function handlePlayDemo() {
+    if (demoState === "playing") {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+      setDemoState("idle")
+      return
+    }
+
+    if (demoState === "loading") return
+
+    setDemoState("loading")
+
+    try {
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
+        {
+          method: "POST",
+          headers: {
+            "xi-api-key": ELEVEN_API_KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text: DEMO_TEXT,
+            model_id: "eleven_turbo_v2_5",
+            voice_settings: {
+              stability: 0.3,
+              similarity_boost: 0.9,
+            },
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err?.detail?.message || `API error ${response.status}`)
+      }
+
+      const blob = await response.blob()
+      const audioUrl = URL.createObjectURL(blob)
+      const audio = new Audio(audioUrl)
+      audioRef.current = audio
+
+      audio.onended = () => {
+        setDemoState("idle")
+        URL.revokeObjectURL(audioUrl)
+      }
+      audio.onerror = () => {
+        setDemoState("error")
+        URL.revokeObjectURL(audioUrl)
+      }
+
+      await audio.play()
+      setDemoState("playing")
+    } catch {
+      setDemoState("error")
+    }
+  }
+
   return (
     <section
       id="creative"
@@ -105,8 +177,40 @@ export function ElevenCreativeSection() {
             though the planet&apos;s veil were made of stained glass suspended in space. Sensors pulsed with
             irregular patterns, the kind no algorithm could quite reconcile.&quot;
           </div>
-          <div className="mt-3">
-            <button className="btn-pink-xp text-xs">► PLAY DEMO</button>
+          <div className="mt-5 flex flex-col items-center gap-2">
+            <button
+              className="btn-pink-xp text-xs"
+              onClick={handlePlayDemo}
+              disabled={demoState === "loading"}
+              aria-label={demoState === "playing" ? "Stop demo audio" : "Play demo audio"}
+              style={{ cursor: demoState === "loading" ? "wait" : "pointer" }}
+            >
+              {demoState === "loading" && (
+                <span className="inline-flex items-center gap-2">
+                  <span className="retro-spinner" style={{ width: 10, height: 10, borderWidth: 2, display: "inline-block" }} />
+                  LOADING...
+                </span>
+              )}
+              {demoState === "playing" && "■ STOP"}
+              {demoState === "idle" && "► PLAY DEMO"}
+              {demoState === "error" && "► RETRY"}
+            </button>
+            {demoState === "playing" && (
+              <span
+                className="text-xs blink"
+                style={{ color: "#FF00FF", fontFamily: "'Courier New', monospace", textShadow: "0 0 6px #FF00FF" }}
+              >
+                ► PLAYING...
+              </span>
+            )}
+            {demoState === "error" && (
+              <span
+                className="text-xs"
+                style={{ color: "#FF4444", fontFamily: "'Courier New', monospace" }}
+              >
+                ERROR: Check API key in .env.local
+              </span>
+            )}
           </div>
         </div>
 
