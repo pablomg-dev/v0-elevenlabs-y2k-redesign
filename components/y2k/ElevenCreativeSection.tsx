@@ -4,8 +4,10 @@ import { useRef, useState } from "react"
 
 const ELEVEN_API_KEY = process.env.NEXT_PUBLIC_ELEVEN_API_KEY || ""
 const VOICE_ID = "pNInz6obpgDQGcFmaJgB"
-const DEMO_TEXT =
-  "Amidst the outer atmosphere of the planet Aurora, the sky shimmered with fractured light."
+const DEMO_PARTS = [
+  "Amidst the outer atmosphere of the planet Aurora, the sky shimmered with fractured light, as though the planet's veil were made of stained glass suspended in space.",
+  "Sensors pulsed with irregular patterns, the kind no algorithm could quite reconcile.",
+]
 
 type DemoState = "idle" | "loading" | "playing" | "error"
 
@@ -57,9 +59,16 @@ const features = [
 export function ElevenCreativeSection() {
   const [demoState, setDemoState] = useState<DemoState>("idle")
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const shouldStopRef = useRef(false)
 
-  async function playDemoAudio() {
-    try {
+  async function playDemoParts() {
+    shouldStopRef.current = false
+
+    for (let i = 0; i < DEMO_PARTS.length; i++) {
+      if (shouldStopRef.current) break
+
+      const text = DEMO_PARTS[i]
+
       const response = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
         {
@@ -69,7 +78,7 @@ export function ElevenCreativeSection() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            text: DEMO_TEXT,
+            text,
             model_id: "eleven_turbo_v2_5",
             voice_settings: {
               stability: 0.3,
@@ -89,7 +98,7 @@ export function ElevenCreativeSection() {
       const audio = new Audio(audioUrl)
       audioRef.current = audio
 
-      // Play and wait for audio to finish
+      // Play and wait for this part to finish
       await new Promise<void>((resolve, reject) => {
         audio.onended = () => {
           URL.revokeObjectURL(audioUrl)
@@ -102,16 +111,20 @@ export function ElevenCreativeSection() {
         audio.play().catch(reject)
       })
 
+      // 300ms pause between parts
+      if (i < DEMO_PARTS.length - 1 && !shouldStopRef.current) {
+        await new Promise((resolve) => setTimeout(resolve, 300))
+      }
+    }
+
+    if (!shouldStopRef.current) {
       setDemoState("idle")
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Unknown error"
-      setDemoState("error")
-      throw new Error(message)
     }
   }
 
   async function handlePlayDemo() {
     if (demoState === "playing") {
+      shouldStopRef.current = true
       if (audioRef.current) {
         audioRef.current.pause()
         audioRef.current = null
@@ -125,10 +138,9 @@ export function ElevenCreativeSection() {
     setDemoState("loading")
 
     try {
-      await playDemoAudio()
       setDemoState("playing")
+      await playDemoParts()
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Unknown error"
       setDemoState("error")
     }
   }
