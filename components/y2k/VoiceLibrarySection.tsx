@@ -1,11 +1,11 @@
 "use client"
 
 const voices = [
-  { name: "Audiobooks & Podcasts", desc: "Expressive voices that bring audiobooks and podcasts to life.", color: "#00FFFF" },
-  { name: "Brand & Marketing", desc: "Persuasive voices that drive action and brand recall.", color: "#FF00FF" },
-  { name: "Games & Animation", desc: "Playful and engaging voices for cartoons or video games.", color: "#00FFFF" },
-  { name: "Conversational", desc: "Natural voices perfect for informal scenarios.", color: "#C0C0C0" },
-  { name: "Short-Form Content", desc: "Trendy, attention-grabbing voices for short-form content.", color: "#FF00FF" },
+  { name: "Audiobooks & Podcasts", desc: "Expressive voices that bring audiobooks and podcasts to life.", color: "#00FFFF", isNew: false },
+  { name: "Brand & Marketing", desc: "Persuasive voices that drive action and brand recall.", color: "#FF00FF", isNew: true },
+  { name: "Games & Animation", desc: "Playful and engaging voices for cartoons or video games.", color: "#00FFFF", isNew: false },
+  { name: "Conversational", desc: "Natural voices perfect for informal scenarios.", color: "#C0C0C0", isNew: false },
+  { name: "Short-Form Content", desc: "Trendy, attention-grabbing voices for short-form content.", color: "#FF00FF", isNew: true },
 ]
 
 export function VoiceLibrarySection() {
@@ -52,7 +52,7 @@ export function VoiceLibrarySection() {
           {voices.map((v, i) => (
             <div
               key={v.name}
-              className="bevel-card p-5"
+              className={`bevel-card p-5 pixel-corners ${v.color === "#FF00FF" ? "pixel-corners-pink" : ""}`}
               style={{ animationDelay: `${i * 0.1}s` }}
             >
               <div className="flex items-start gap-3">
@@ -63,7 +63,7 @@ export function VoiceLibrarySection() {
                 >
                   ✦
                 </span>
-                <div>
+                <div className="flex-1">
                   <h3
                     className="font-bold text-sm mb-1"
                     style={{
@@ -74,6 +74,7 @@ export function VoiceLibrarySection() {
                     }}
                   >
                     {v.name}
+                    {v.isNew && <span className="badge-new ml-2">NEW!</span>}
                   </h3>
                   <p className="text-xs leading-relaxed" style={{ color: "#888" }}>
                     {v.desc}

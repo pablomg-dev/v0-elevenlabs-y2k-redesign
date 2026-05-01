@@ -6,36 +6,42 @@ const features = [
     desc: "Create podcasts, audiobooks and voiceovers in an editor built on all of ElevenLabs' audio research combined.",
     icon: "◈",
     color: "#FF00FF",
+    isNew: false,
   },
   {
     title: "Ultra-Realistic Speech",
     desc: "Create controllable, expressive speech layered across 70+ languages.",
     icon: "◈",
     color: "#00FFFF",
+    isNew: false,
   },
   {
     title: "Music Generation",
     desc: "Generate studio-quality tracks instantly, any genre, any style, vocals or instrumental.",
     icon: "◈",
     color: "#FF00FF",
+    isNew: true,
   },
   {
     title: "Sound Effects (SFX)",
     desc: "Create custom sound effects, soundscapes and ambient audio or search the SFX library.",
     icon: "◈",
     color: "#00FFFF",
+    isNew: false,
   },
   {
     title: "Voice Cloning",
     desc: "Clone a replica of your own voice, design one from a prompt, or explore 1000s of voices from the library.",
     icon: "◈",
     color: "#FF00FF",
+    isNew: false,
   },
   {
     title: "Image & Video",
     desc: "Create or edit images and turn ideas into videos with leading models like Veo, Sora, Wan, Kling and Seedance.",
     icon: "◈",
     color: "#00FFFF",
+    isNew: true,
   },
 ]
 
@@ -107,7 +113,10 @@ export function ElevenCreativeSection() {
         {/* Feature grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((f) => (
-            <div key={f.title} className="bevel-card p-5">
+            <div
+              key={f.title}
+              className={`bevel-card p-5 pixel-corners ${f.color === "#FF00FF" ? "pixel-corners-pink" : ""}`}
+            >
               <div
                 className="text-2xl mb-2 blink-slow"
                 style={{ color: f.color, textShadow: `0 0 6px ${f.color}` }}
@@ -124,6 +133,7 @@ export function ElevenCreativeSection() {
                 }}
               >
                 {f.title}
+                {f.isNew && <span className="badge-new ml-2">NEW!</span>}
               </h3>
               <p className="text-xs leading-relaxed" style={{ color: "#777" }}>
                 {f.desc}

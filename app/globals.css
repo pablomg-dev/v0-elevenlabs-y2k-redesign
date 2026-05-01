@@ -476,3 +476,97 @@
   font-family: Impact, 'Arial Black', 'Arial Bold', sans-serif;
   text-transform: uppercase;
 }
+
+/* ===== NEW! BADGE ===== */
+@keyframes new-badge-pop {
+  0%, 100% { transform: scale(1) rotate(-6deg); }
+  50% { transform: scale(1.15) rotate(-6deg); }
+}
+.badge-new {
+  display: inline-block;
+  background: linear-gradient(135deg, #FFFF00 0%, #FF8800 60%, #FF0000 100%);
+  color: #000;
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-top: 2px solid #FFFF88;
+  border-left: 2px solid #FFFF88;
+  border-right: 2px solid #883300;
+  border-bottom: 2px solid #883300;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+  animation: new-badge-pop 0.8s ease-in-out infinite;
+  transform: rotate(-6deg);
+  transform-origin: center;
+  line-height: 1.4;
+  user-select: none;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+}
+
+/* ===== PIXEL CORNER CARD ===== */
+/* Applied as a wrapper — adds 4px "pixel" dots in each corner via box-shadow on a pseudo-element */
+.pixel-corners {
+  position: relative;
+}
+.pixel-corners::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* 4 corner pixels, each 4×4 */
+  box-shadow:
+    /* top-left */
+    0px 0px 0 2px #00FFFF,
+    4px 4px 0 0px #00FFFF,
+    /* top-right */
+    calc(100% - 4px) 0px 0 2px #00FFFF,
+    calc(100% - 8px) 4px 0 0px #00FFFF,
+    /* bottom-left */
+    0px calc(100% - 4px) 0 2px #00FFFF,
+    4px calc(100% - 8px) 0 0px #00FFFF,
+    /* bottom-right */
+    calc(100% - 4px) calc(100% - 4px) 0 2px #00FFFF,
+    calc(100% - 8px) calc(100% - 8px) 0 0px #00FFFF;
+  z-index: 5;
+}
+.pixel-corners-pink::before {
+  box-shadow:
+    0px 0px 0 2px #FF00FF,
+    4px 4px 0 0px #FF00FF,
+    calc(100% - 4px) 0px 0 2px #FF00FF,
+    calc(100% - 8px) 4px 0 0px #FF00FF,
+    0px calc(100% - 4px) 0 2px #FF00FF,
+    4px calc(100% - 8px) 0 0px #FF00FF,
+    calc(100% - 4px) calc(100% - 4px) 0 2px #FF00FF,
+    calc(100% - 8px) calc(100% - 8px) 0 0px #FF00FF;
+}
+
+/* ===== ENHANCED STAR DIVIDER ===== */
+.star-divider-fancy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 16px 0;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  overflow: hidden;
+}
+.star-divider-line {
+  flex: 1;
+  height: 1px;
+  max-width: 180px;
+}
+.star-divider-text {
+  color: #FF00FF;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.5rem;
+  text-shadow: 0 0 8px #FF00FF, 0 0 16px #FF00FF;
+  white-space: nowrap;
+  padding: 0 8px;
+  user-select: none;
+}

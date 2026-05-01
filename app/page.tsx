@@ -30,32 +30,32 @@ export default function HomePage() {
       {/* Hero */}
       <HeroSection />
 
-      <StarDivider />
+      <StarDivider color="cyan" />
 
       {/* Voice Library */}
       <VoiceLibrarySection />
 
-      <StarDivider />
+      <StarDivider color="pink" />
 
       {/* ElevenCreative */}
       <ElevenCreativeSection />
 
-      <StarDivider />
+      <StarDivider color="cyan" />
 
       {/* ElevenAgents */}
       <ElevenAgentsSection />
 
-      <StarDivider />
+      <StarDivider color="pink" />
 
       {/* ElevenAPI */}
       <ElevenAPISection />
 
-      <StarDivider />
+      <StarDivider color="cyan" />
 
       {/* Research Timeline */}
       <ResearchSection />
 
-      <StarDivider />
+      <StarDivider color="pink" />
 
       {/* Safety + Blog */}
       <SafetyAndBlogSection />

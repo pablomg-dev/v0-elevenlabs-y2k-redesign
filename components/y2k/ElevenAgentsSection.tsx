@@ -5,26 +5,31 @@ const agentFeatures = [
     title: "Omnichannel Agents",
     desc: "Agents listen, read and interact just like humans would across phone, chat, email and WhatsApp.",
     color: "#00FFFF",
+    isNew: true,
   },
   {
     title: "Analytics",
     desc: "Easily measure success rates and CX metrics, optimizing flows over time.",
     color: "#FF00FF",
+    isNew: false,
   },
   {
     title: "Testing",
     desc: "Simulate real-world conversations to validate agents behave as expected before deployment.",
     color: "#00FFFF",
+    isNew: false,
   },
   {
     title: "Guardrails",
     desc: "Establish clear behavioral and compliance rules that keep agent responses aligned with policy.",
     color: "#FF00FF",
+    isNew: false,
   },
   {
     title: "Workflows",
     desc: "Handle complex conversation flows, apply business logic and connect securely to systems.",
     color: "#00FFFF",
+    isNew: true,
   },
 ]
 
@@ -113,7 +118,10 @@ export function ElevenAgentsSection() {
         {/* Feature grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
           {agentFeatures.map((f) => (
-            <div key={f.title} className="bevel-card p-5">
+            <div
+              key={f.title}
+              className={`bevel-card p-5 pixel-corners ${f.color === "#FF00FF" ? "pixel-corners-pink" : ""}`}
+            >
               <h3
                 className="font-bold text-sm mb-2 uppercase"
                 style={{
@@ -123,6 +131,7 @@ export function ElevenAgentsSection() {
                 }}
               >
                 ▶ {f.title}
+                {f.isNew && <span className="badge-new ml-2">NEW!</span>}
               </h3>
               <p className="text-xs leading-relaxed" style={{ color: "#777" }}>
                 {f.desc}
