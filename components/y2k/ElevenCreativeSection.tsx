@@ -58,30 +58,8 @@ export function ElevenCreativeSection() {
   const [demoState, setDemoState] = useState<DemoState>("idle")
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  async function handlePlayDemo() {
-    console.log("[v0] API KEY present:", !!ELEVEN_API_KEY, "length:", ELEVEN_API_KEY.length)
-
-    if (demoState === "playing") {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
-      }
-      setDemoState("idle")
-      return
-    }
-
-    if (demoState === "loading") return
-
-    if (!ELEVEN_API_KEY) {
-      console.error("[v0] API key not configured")
-      setDemoState("error")
-      return
-    }
-
-    setDemoState("loading")
-
+  async function playDemoAudio() {
     try {
-      console.log("[v0] Fetching audio from ElevenLabs API...")
       const response = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
         {
@@ -103,7 +81,6 @@ export function ElevenCreativeSection() {
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}))
-        console.error("[v0] API error:", response.status, err)
         throw new Error(err?.detail?.message || `API error ${response.status}`)
       }
 
@@ -112,19 +89,46 @@ export function ElevenCreativeSection() {
       const audio = new Audio(audioUrl)
       audioRef.current = audio
 
-      audio.onended = () => {
-        setDemoState("idle")
-        URL.revokeObjectURL(audioUrl)
-      }
-      audio.onerror = () => {
-        setDemoState("error")
-        URL.revokeObjectURL(audioUrl)
-      }
+      // Play and wait for audio to finish
+      await new Promise<void>((resolve, reject) => {
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl)
+          resolve()
+        }
+        audio.onerror = () => {
+          URL.revokeObjectURL(audioUrl)
+          reject(new Error("Playback error"))
+        }
+        audio.play().catch(reject)
+      })
 
-      await audio.play()
+      setDemoState("idle")
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error"
+      setDemoState("error")
+      throw new Error(message)
+    }
+  }
+
+  async function handlePlayDemo() {
+    if (demoState === "playing") {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+      setDemoState("idle")
+      return
+    }
+
+    if (demoState === "loading") return
+
+    setDemoState("loading")
+
+    try {
+      await playDemoAudio()
       setDemoState("playing")
-    } catch (err) {
-      console.error("[v0] Demo playback error:", err)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error"
       setDemoState("error")
     }
   }
