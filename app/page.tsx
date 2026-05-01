@@ -10,6 +10,7 @@ import { ResearchSection } from "@/components/y2k/ResearchSection"
 import { SafetyAndBlogSection } from "@/components/y2k/SafetyAndBlogSection"
 import { Footer } from "@/components/y2k/Footer"
 import { VoiceTourButton } from "@/components/y2k/VoiceTourButton"
+import { UnderConstructionBadge } from "@/components/y2k/UnderConstructionBadge"
 
 export default function HomePage() {
   return (
@@ -29,32 +30,32 @@ export default function HomePage() {
       {/* Hero */}
       <HeroSection />
 
-      <StarDivider />
+      <StarDivider color="cyan" />
 
       {/* Voice Library */}
       <VoiceLibrarySection />
 
-      <StarDivider />
+      <StarDivider color="pink" />
 
       {/* ElevenCreative */}
       <ElevenCreativeSection />
 
-      <StarDivider />
+      <StarDivider color="cyan" />
 
       {/* ElevenAgents */}
       <ElevenAgentsSection />
 
-      <StarDivider />
+      <StarDivider color="pink" />
 
       {/* ElevenAPI */}
       <ElevenAPISection />
 
-      <StarDivider />
+      <StarDivider color="cyan" />
 
       {/* Research Timeline */}
       <ResearchSection />
 
-      <StarDivider />
+      <StarDivider color="pink" />
 
       {/* Safety + Blog */}
       <SafetyAndBlogSection />
@@ -64,6 +65,9 @@ export default function HomePage() {
 
       {/* Floating Voice Tour Button */}
       <VoiceTourButton />
+
+      {/* Under Construction Badge */}
+      <UnderConstructionBadge />
     </div>
   )
 }

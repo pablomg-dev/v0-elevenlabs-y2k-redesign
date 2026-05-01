@@ -1,12 +1,16 @@
 "use client"
 
+import { SparkleBackground } from "./SparkleBackground"
+
 export function HeroSection() {
   return (
     <section
       id="hero"
-      className="chrome-bg scanlines relative overflow-hidden py-20 px-4 text-center"
+      className="hero-dark-bg scanlines-heavy relative overflow-hidden py-20 px-4 text-center"
       style={{ minHeight: "85vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}
     >
+      {/* Animated sparkles */}
+      <SparkleBackground />
       {/* Grid overlay */}
       <div
         aria-hidden="true"

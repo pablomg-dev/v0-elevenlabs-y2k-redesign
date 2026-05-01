@@ -54,7 +54,7 @@ export function ElevenAPISection() {
         </div>
 
         {/* TTS API */}
-        <div className="bevel-card p-6 mb-6">
+        <div className="bevel-card pixel-corners p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
               <div
@@ -69,14 +69,15 @@ export function ElevenAPISection() {
               </p>
               <div className="flex flex-col gap-2">
                 {[
-                  { name: "Eleven Flash", tag: "75ms latency for conversational usecases", color: "#00FFFF" },
-                  { name: "Eleven Multilingual", tag: "Best lifelike consistent speech", color: "#FF00FF" },
-                  { name: "Eleven v3", tag: "Our most expressive model yet", color: "#C0C0C0" },
+                  { name: "Eleven Flash", tag: "75ms latency for conversational usecases", color: "#00FFFF", isNew: false },
+                  { name: "Eleven Multilingual", tag: "Best lifelike consistent speech", color: "#FF00FF", isNew: false },
+                  { name: "Eleven v3", tag: "Our most expressive model yet", color: "#C0C0C0", isNew: true },
                 ].map((m) => (
-                  <div key={m.name} className="flex items-center gap-3 px-3 py-2" style={{ border: "1px solid #222" }}>
+                    <div key={m.name} className="flex items-center gap-3 px-3 py-2" style={{ border: "1px solid #222" }}>
                     <span className="blink-slow" style={{ color: m.color }}>◆</span>
                     <div>
                       <span className="font-bold text-xs" style={{ color: m.color }}>{m.name}</span>
+                      {m.isNew && <span className="badge-new ml-2">NEW!</span>}
                       <span className="text-xs ml-2" style={{ color: "#555" }}>— {m.tag}</span>
                     </div>
                   </div>
@@ -96,7 +97,7 @@ export function ElevenAPISection() {
         </div>
 
         {/* STT API */}
-        <div className="bevel-card p-6 mb-6">
+        <div className="bevel-card pixel-corners pixel-corners-pink p-6 mb-6">
           <div
             className="text-xs font-bold mb-3 uppercase"
             style={{ color: "#FF00FF", fontFamily: "'Courier New', monospace" }}
@@ -128,7 +129,7 @@ export function ElevenAPISection() {
         </div>
 
         {/* Music API */}
-        <div className="bevel-card p-6">
+        <div className="bevel-card pixel-corners p-6">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1">
               <div

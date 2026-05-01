@@ -1,45 +1,150 @@
 "use client"
 
+import { useRef, useState } from "react"
+
+const ELEVEN_API_KEY = process.env.NEXT_PUBLIC_ELEVEN_API_KEY || ""
+const VOICE_ID = "pNInz6obpgDQGcFmaJgB"
+const DEMO_PARTS = [
+  "Amidst the outer atmosphere of the planet Aurora, the sky shimmered with fractured light, as though the planet's veil were made of stained glass suspended in space.",
+  "Sensors pulsed with irregular patterns, the kind no algorithm could quite reconcile.",
+]
+
+type DemoState = "idle" | "loading" | "playing" | "error"
+
 const features = [
   {
     title: "All-in-one AI Editor",
     desc: "Create podcasts, audiobooks and voiceovers in an editor built on all of ElevenLabs' audio research combined.",
     icon: "◈",
     color: "#FF00FF",
+    isNew: false,
   },
   {
     title: "Ultra-Realistic Speech",
     desc: "Create controllable, expressive speech layered across 70+ languages.",
     icon: "◈",
     color: "#00FFFF",
+    isNew: false,
   },
   {
     title: "Music Generation",
     desc: "Generate studio-quality tracks instantly, any genre, any style, vocals or instrumental.",
     icon: "◈",
     color: "#FF00FF",
+    isNew: true,
   },
   {
     title: "Sound Effects (SFX)",
     desc: "Create custom sound effects, soundscapes and ambient audio or search the SFX library.",
     icon: "◈",
     color: "#00FFFF",
+    isNew: false,
   },
   {
     title: "Voice Cloning",
     desc: "Clone a replica of your own voice, design one from a prompt, or explore 1000s of voices from the library.",
     icon: "◈",
     color: "#FF00FF",
+    isNew: false,
   },
   {
     title: "Image & Video",
     desc: "Create or edit images and turn ideas into videos with leading models like Veo, Sora, Wan, Kling and Seedance.",
     icon: "◈",
     color: "#00FFFF",
+    isNew: true,
   },
 ]
 
 export function ElevenCreativeSection() {
+  const [demoState, setDemoState] = useState<DemoState>("idle")
+  const audioRef = useRef<HTMLAudioElement | null>(null)
+  const shouldStopRef = useRef(false)
+
+  async function playDemoParts() {
+    shouldStopRef.current = false
+
+    for (let i = 0; i < DEMO_PARTS.length; i++) {
+      if (shouldStopRef.current) break
+
+      const text = DEMO_PARTS[i]
+
+      const response = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
+        {
+          method: "POST",
+          headers: {
+            "xi-api-key": ELEVEN_API_KEY,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            text,
+            model_id: "eleven_turbo_v2_5",
+            voice_settings: {
+              stability: 0.3,
+              similarity_boost: 0.9,
+            },
+          }),
+        }
+      )
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}))
+        throw new Error(err?.detail?.message || `API error ${response.status}`)
+      }
+
+      const blob = await response.blob()
+      const audioUrl = URL.createObjectURL(blob)
+      const audio = new Audio(audioUrl)
+      audioRef.current = audio
+
+      // Play and wait for this part to finish
+      await new Promise<void>((resolve, reject) => {
+        audio.onended = () => {
+          URL.revokeObjectURL(audioUrl)
+          resolve()
+        }
+        audio.onerror = () => {
+          URL.revokeObjectURL(audioUrl)
+          reject(new Error("Playback error"))
+        }
+        audio.play().catch(reject)
+      })
+
+      // 300ms pause between parts
+      if (i < DEMO_PARTS.length - 1 && !shouldStopRef.current) {
+        await new Promise((resolve) => setTimeout(resolve, 300))
+      }
+    }
+
+    if (!shouldStopRef.current) {
+      setDemoState("idle")
+    }
+  }
+
+  async function handlePlayDemo() {
+    if (demoState === "playing") {
+      shouldStopRef.current = true
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
+      }
+      setDemoState("idle")
+      return
+    }
+
+    if (demoState === "loading") return
+
+    setDemoState("loading")
+
+    try {
+      setDemoState("playing")
+      await playDemoParts()
+    } catch (err: unknown) {
+      setDemoState("error")
+    }
+  }
+
   return (
     <section
       id="creative"
@@ -99,15 +204,50 @@ export function ElevenCreativeSection() {
             though the planet&apos;s veil were made of stained glass suspended in space. Sensors pulsed with
             irregular patterns, the kind no algorithm could quite reconcile.&quot;
           </div>
-          <div className="mt-3">
-            <button className="btn-pink-xp text-xs">► PLAY DEMO</button>
+          <div className="mt-5 flex flex-col items-center gap-2">
+            <button
+              className="btn-pink-xp text-xs"
+              onClick={handlePlayDemo}
+              disabled={demoState === "loading"}
+              aria-label={demoState === "playing" ? "Stop demo audio" : "Play demo audio"}
+              style={{ cursor: demoState === "loading" ? "wait" : "pointer" }}
+            >
+              {demoState === "loading" && (
+                <span className="inline-flex items-center gap-2">
+                  <span className="retro-spinner" style={{ width: 10, height: 10, borderWidth: 2, display: "inline-block" }} />
+                  LOADING...
+                </span>
+              )}
+              {demoState === "playing" && "■ STOP"}
+              {demoState === "idle" && "► PLAY DEMO"}
+              {demoState === "error" && "► RETRY"}
+            </button>
+            {demoState === "playing" && (
+              <span
+                className="text-xs blink"
+                style={{ color: "#FF00FF", fontFamily: "'Courier New', monospace", textShadow: "0 0 6px #FF00FF" }}
+              >
+                ► PLAYING...
+              </span>
+            )}
+            {demoState === "error" && (
+              <span
+                className="text-xs"
+                style={{ color: "#FF4444", fontFamily: "'Courier New', monospace" }}
+              >
+                ERROR: Check API key in .env.local
+              </span>
+            )}
           </div>
         </div>
 
         {/* Feature grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((f) => (
-            <div key={f.title} className="bevel-card p-5">
+            <div
+              key={f.title}
+              className={`bevel-card p-5 pixel-corners ${f.color === "#FF00FF" ? "pixel-corners-pink" : ""}`}
+            >
               <div
                 className="text-2xl mb-2 blink-slow"
                 style={{ color: f.color, textShadow: `0 0 6px ${f.color}` }}
@@ -124,6 +264,7 @@ export function ElevenCreativeSection() {
                 }}
               >
                 {f.title}
+                {f.isNew && <span className="badge-new ml-2">NEW!</span>}
               </h3>
               <p className="text-xs leading-relaxed" style={{ color: "#777" }}>
                 {f.desc}

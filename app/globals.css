@@ -157,6 +157,20 @@
   0% { top: -10%; }
   100% { top: 110%; }
 }
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+@keyframes float-sparkle {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+}
 
 .blink { animation: blink 1s step-start infinite; }
 .blink-slow { animation: blink 1.5s step-start infinite; }
@@ -184,11 +198,15 @@
 
 /* ===== BEVELED BUTTON (Windows XP style) ===== */
 .btn-xp {
-  background: linear-gradient(to bottom, #f0ece0 0%, #d4d0c8 45%, #b8b4a8 100%);
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-right: 2px solid #808080;
-  border-bottom: 2px solid #808080;
+  background: linear-gradient(to bottom, #f5f3ed 0%, #ece9e0 20%, #d8d4cc 50%, #c8c4bc 80%, #b8b4ac 100%);
+  border-top: 3px solid #ffffff;
+  border-left: 3px solid #ffffff;
+  border-right: 3px solid #606060;
+  border-bottom: 3px solid #606060;
+  box-shadow: 
+    inset 1px 1px 0 rgba(255,255,255,0.8),
+    inset -1px -1px 0 rgba(0,0,0,0.15),
+    2px 2px 4px rgba(0,0,0,0.3);
   color: #000;
   font-family: 'Courier New', monospace;
   font-weight: bold;
@@ -199,20 +217,34 @@
   letter-spacing: 0.5px;
   user-select: none;
   display: inline-block;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.5);
+  transition: transform 0.05s;
+}
+.btn-xp:hover {
+  background: linear-gradient(to bottom, #ffffff 0%, #f0ece4 20%, #e0dcd4 50%, #d0ccc4 80%, #c0bcb4 100%);
 }
 .btn-xp:active {
-  border-top: 2px solid #808080;
-  border-left: 2px solid #808080;
-  border-right: 2px solid #ffffff;
-  border-bottom: 2px solid #ffffff;
+  border-top: 3px solid #606060;
+  border-left: 3px solid #606060;
+  border-right: 3px solid #ffffff;
+  border-bottom: 3px solid #ffffff;
+  box-shadow: 
+    inset 2px 2px 4px rgba(0,0,0,0.2),
+    inset -1px -1px 0 rgba(255,255,255,0.5);
+  transform: translate(1px, 1px);
 }
 
 .btn-cyan-xp {
-  background: linear-gradient(to bottom, #80FFFF 0%, #00FFFF 40%, #00CCCC 100%);
-  border-top: 2px solid #CCFFFF;
-  border-left: 2px solid #CCFFFF;
-  border-right: 2px solid #006666;
-  border-bottom: 2px solid #006666;
+  background: linear-gradient(to bottom, #AAFFFF 0%, #66FFFF 20%, #00FFFF 50%, #00DDDD 80%, #00BBBB 100%);
+  border-top: 3px solid #CCFFFF;
+  border-left: 3px solid #CCFFFF;
+  border-right: 3px solid #004444;
+  border-bottom: 3px solid #004444;
+  box-shadow: 
+    inset 1px 1px 0 rgba(255,255,255,0.6),
+    inset -1px -1px 0 rgba(0,0,0,0.2),
+    2px 2px 6px rgba(0,0,0,0.4),
+    0 0 10px rgba(0,255,255,0.3);
   color: #000;
   font-family: 'Courier New', monospace;
   font-weight: bold;
@@ -223,20 +255,38 @@
   letter-spacing: 1px;
   user-select: none;
   display: inline-block;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+  transition: transform 0.05s, box-shadow 0.1s;
+}
+.btn-cyan-xp:hover {
+  box-shadow: 
+    inset 1px 1px 0 rgba(255,255,255,0.6),
+    inset -1px -1px 0 rgba(0,0,0,0.2),
+    2px 2px 6px rgba(0,0,0,0.4),
+    0 0 20px rgba(0,255,255,0.5);
 }
 .btn-cyan-xp:active {
-  border-top: 2px solid #006666;
-  border-left: 2px solid #006666;
-  border-right: 2px solid #CCFFFF;
-  border-bottom: 2px solid #CCFFFF;
+  border-top: 3px solid #004444;
+  border-left: 3px solid #004444;
+  border-right: 3px solid #CCFFFF;
+  border-bottom: 3px solid #CCFFFF;
+  box-shadow: 
+    inset 2px 2px 4px rgba(0,0,0,0.3),
+    0 0 10px rgba(0,255,255,0.3);
+  transform: translate(1px, 1px);
 }
 
 .btn-pink-xp {
-  background: linear-gradient(to bottom, #FFAAFF 0%, #FF00FF 40%, #CC00CC 100%);
-  border-top: 2px solid #FFCCFF;
-  border-left: 2px solid #FFCCFF;
-  border-right: 2px solid #880088;
-  border-bottom: 2px solid #880088;
+  background: linear-gradient(to bottom, #FFCCFF 0%, #FF88FF 20%, #FF00FF 50%, #DD00DD 80%, #BB00BB 100%);
+  border-top: 3px solid #FFDDFF;
+  border-left: 3px solid #FFDDFF;
+  border-right: 3px solid #660066;
+  border-bottom: 3px solid #660066;
+  box-shadow: 
+    inset 1px 1px 0 rgba(255,255,255,0.6),
+    inset -1px -1px 0 rgba(0,0,0,0.2),
+    2px 2px 6px rgba(0,0,0,0.4),
+    0 0 10px rgba(255,0,255,0.3);
   color: #000;
   font-family: 'Courier New', monospace;
   font-weight: bold;
@@ -247,12 +297,25 @@
   letter-spacing: 1px;
   user-select: none;
   display: inline-block;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+  transition: transform 0.05s, box-shadow 0.1s;
+}
+.btn-pink-xp:hover {
+  box-shadow: 
+    inset 1px 1px 0 rgba(255,255,255,0.6),
+    inset -1px -1px 0 rgba(0,0,0,0.2),
+    2px 2px 6px rgba(0,0,0,0.4),
+    0 0 20px rgba(255,0,255,0.5);
 }
 .btn-pink-xp:active {
-  border-top: 2px solid #880088;
-  border-left: 2px solid #880088;
-  border-right: 2px solid #FFCCFF;
-  border-bottom: 2px solid #FFCCFF;
+  border-top: 3px solid #660066;
+  border-left: 3px solid #660066;
+  border-right: 3px solid #FFDDFF;
+  border-bottom: 3px solid #FFDDFF;
+  box-shadow: 
+    inset 2px 2px 4px rgba(0,0,0,0.3),
+    0 0 10px rgba(255,0,255,0.3);
+  transform: translate(1px, 1px);
 }
 
 /* ===== TASKBAR NAV ===== */
@@ -291,12 +354,69 @@
   background: repeating-linear-gradient(
     to bottom,
     transparent 0px,
-    transparent 3px,
-    rgba(0,0,0,0.12) 3px,
-    rgba(0,0,0,0.12) 4px
+    transparent 2px,
+    rgba(0,0,0,0.25) 2px,
+    rgba(0,0,0,0.25) 4px
   );
   pointer-events: none;
   z-index: 10;
+}
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0,255,255,0.03) 50%,
+    transparent 100%
+  );
+  animation: scanline-move 8s linear infinite;
+  pointer-events: none;
+  z-index: 11;
+}
+
+/* ===== HEAVY SCANLINES FOR HERO ===== */
+.scanlines-heavy {
+  position: relative;
+}
+.scanlines-heavy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0,0,0,0.4) 2px,
+    rgba(0,0,0,0.4) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+}
+.scanlines-heavy::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,255,255,0.08) 0%,
+    transparent 100%
+  );
+  animation: scanline-move 6s linear infinite;
+  pointer-events: none;
+  z-index: 11;
+}
+
+/* ===== DARKER HERO BG ===== */
+.hero-dark-bg {
+  background: 
+    radial-gradient(ellipse at 30% 20%, rgba(0,255,255,0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(255,0,255,0.08) 0%, transparent 50%),
+    linear-gradient(180deg, #000000 0%, #010505 30%, #020808 60%, #000000 100%);
 }
 
 /* ===== STAR DIVIDER ===== */
@@ -355,4 +475,98 @@
 .impact-heading {
   font-family: Impact, 'Arial Black', 'Arial Bold', sans-serif;
   text-transform: uppercase;
+}
+
+/* ===== NEW! BADGE ===== */
+@keyframes new-badge-pop {
+  0%, 100% { transform: scale(1) rotate(-6deg); }
+  50% { transform: scale(1.15) rotate(-6deg); }
+}
+.badge-new {
+  display: inline-block;
+  background: linear-gradient(135deg, #FFFF00 0%, #FF8800 60%, #FF0000 100%);
+  color: #000;
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  border-top: 2px solid #FFFF88;
+  border-left: 2px solid #FFFF88;
+  border-right: 2px solid #883300;
+  border-bottom: 2px solid #883300;
+  text-shadow: 1px 1px 0 rgba(255,255,255,0.4);
+  animation: new-badge-pop 0.8s ease-in-out infinite;
+  transform: rotate(-6deg);
+  transform-origin: center;
+  line-height: 1.4;
+  user-select: none;
+  vertical-align: middle;
+  position: relative;
+  top: -2px;
+}
+
+/* ===== PIXEL CORNER CARD ===== */
+/* Applied as a wrapper — adds 4px "pixel" dots in each corner via box-shadow on a pseudo-element */
+.pixel-corners {
+  position: relative;
+}
+.pixel-corners::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  /* 4 corner pixels, each 4×4 */
+  box-shadow:
+    /* top-left */
+    0px 0px 0 2px #00FFFF,
+    4px 4px 0 0px #00FFFF,
+    /* top-right */
+    calc(100% - 4px) 0px 0 2px #00FFFF,
+    calc(100% - 8px) 4px 0 0px #00FFFF,
+    /* bottom-left */
+    0px calc(100% - 4px) 0 2px #00FFFF,
+    4px calc(100% - 8px) 0 0px #00FFFF,
+    /* bottom-right */
+    calc(100% - 4px) calc(100% - 4px) 0 2px #00FFFF,
+    calc(100% - 8px) calc(100% - 8px) 0 0px #00FFFF;
+  z-index: 5;
+}
+.pixel-corners-pink::before {
+  box-shadow:
+    0px 0px 0 2px #FF00FF,
+    4px 4px 0 0px #FF00FF,
+    calc(100% - 4px) 0px 0 2px #FF00FF,
+    calc(100% - 8px) 4px 0 0px #FF00FF,
+    0px calc(100% - 4px) 0 2px #FF00FF,
+    4px calc(100% - 8px) 0 0px #FF00FF,
+    calc(100% - 4px) calc(100% - 4px) 0 2px #FF00FF,
+    calc(100% - 8px) calc(100% - 8px) 0 0px #FF00FF;
+}
+
+/* ===== ENHANCED STAR DIVIDER ===== */
+.star-divider-fancy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 16px 0;
+  border-top: 1px solid #1a1a1a;
+  border-bottom: 1px solid #1a1a1a;
+  overflow: hidden;
+}
+.star-divider-line {
+  flex: 1;
+  height: 1px;
+  max-width: 180px;
+}
+.star-divider-text {
+  color: #FF00FF;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  letter-spacing: 0.5rem;
+  text-shadow: 0 0 8px #FF00FF, 0 0 16px #FF00FF;
+  white-space: nowrap;
+  padding: 0 8px;
+  user-select: none;
 }
