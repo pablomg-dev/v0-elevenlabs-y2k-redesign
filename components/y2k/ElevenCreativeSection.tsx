@@ -59,6 +59,8 @@ export function ElevenCreativeSection() {
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
   async function handlePlayDemo() {
+    console.log("[v0] API KEY present:", !!ELEVEN_API_KEY, "length:", ELEVEN_API_KEY.length)
+
     if (demoState === "playing") {
       if (audioRef.current) {
         audioRef.current.pause()
@@ -70,9 +72,16 @@ export function ElevenCreativeSection() {
 
     if (demoState === "loading") return
 
+    if (!ELEVEN_API_KEY) {
+      console.error("[v0] API key not configured")
+      setDemoState("error")
+      return
+    }
+
     setDemoState("loading")
 
     try {
+      console.log("[v0] Fetching audio from ElevenLabs API...")
       const response = await fetch(
         `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
         {
@@ -94,6 +103,7 @@ export function ElevenCreativeSection() {
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}))
+        console.error("[v0] API error:", response.status, err)
         throw new Error(err?.detail?.message || `API error ${response.status}`)
       }
 
@@ -113,7 +123,8 @@ export function ElevenCreativeSection() {
 
       await audio.play()
       setDemoState("playing")
-    } catch {
+    } catch (err) {
+      console.error("[v0] Demo playback error:", err)
       setDemoState("error")
     }
   }
