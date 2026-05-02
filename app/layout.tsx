@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   title: 'ElevenLabs — Free AI Voice Generator & Voice Agents Platform',
   description: 'Bringing technology to life with ultra-realistic AI voice generation, voice agents, and more. Best viewed in Internet Explorer 6.',
   generator: 'v0.app',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+  },
 }
 
 export default function RootLayout({

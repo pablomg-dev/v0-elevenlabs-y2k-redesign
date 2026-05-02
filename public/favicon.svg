@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" shape-rendering="crispEdges">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.5" result="blur1"/>
+      <feGaussianBlur stdDeviation="3" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glow-strong" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur stdDeviation="2.5" result="blur1"/>
+      <feColorMatrix in="blur1" type="matrix"
+        values="0 0 0 0 1
+                0 0 0 0 0
+                0 0 0 0 1
+                0 0 0 0.4 0" result="pink-glow"/>
+      <feGaussianBlur stdDeviation="1" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="pink-glow"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Black background -->
+  <rect width="32" height="32" fill="#000000"/>
+
+  <!-- Subtle dark border -->
+  <rect x="0.5" y="0.5" width="31" height="31" fill="none" stroke="#003333" stroke-width="1"/>
+
+  <!-- Pixel art "E" — col 2-3, rows 4-28 -->
+  <g filter="url(#glow-strong)">
+    <!-- E: vertical bar -->
+    <rect x="3"  y="4"  width="3" height="24" fill="#00FFFF"/>
+    <!-- E: top horizontal -->
+    <rect x="3"  y="4"  width="11" height="3" fill="#00FFFF"/>
+    <!-- E: middle horizontal -->
+    <rect x="3"  y="14" width="9"  height="3" fill="#00FFFF"/>
+    <!-- E: bottom horizontal -->
+    <rect x="3"  y="25" width="11" height="3" fill="#00FFFF"/>
+
+    <!-- L: vertical bar -->
+    <rect x="18" y="4"  width="3" height="24" fill="#00FFFF"/>
+    <!-- L: bottom horizontal -->
+    <rect x="18" y="25" width="11" height="3" fill="#00FFFF"/>
+  </g>
+</svg>
